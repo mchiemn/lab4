@@ -32,6 +32,12 @@ public class lab4 {
 			case 2:
 				editSchedule(keyboard, con);
 				break;
+			case 3:
+				displayStop(keyboard, con);
+				break;
+			case 4:
+				displaySchedule(keyboard, con);
+				break;
 			}
 			System.out.println("Finished? (Y/N)");
 			if(keyboard.readLine().equalsIgnoreCase("Y")) {
@@ -112,6 +118,12 @@ public class lab4 {
 		case 2:
 			addTrip(keyboard, con, tripNum, date, startTime);
 			break;
+		case 3:
+			changeDriver(keyboard, con, tripNum, date, startTime);
+			break;
+		case 4:
+			changeBus(keyboard, con, tripNum, date, startTime);
+			break;
 		}
 	}
 	
@@ -188,5 +200,65 @@ public class lab4 {
 				doneAdding = true;
 		}
 	}
-
+	
+	// User wants to edit tripoffering by changing driver
+	static void changeDriver(BufferedReader keyboard, Connection con, int tripNum, String date, String startTime) throws Exception{
+		System.out.print("Provide new driver name:");
+		String newDriver = keyboard.readLine();
+		Statement st = con.createStatement();
+		
+		int rows = st.executeUpdate("UPDATE tripoffering "
+				+ "SET DriverName = \"" + newDriver +"\" "
+				+ "WHERE TripNumber = " + tripNum
+				+ " AND Date = \"" + date + "\" "
+				+ "AND ScheduledStartTime = \"" + startTime + "\" ");
+		if(rows > 0)
+			System.out.println("Successfully updated");
+		else
+			System.out.println("Data could not be found!");
+	}
+	
+	// User wants to edit tripoffering by changing bus ID
+	static void changeBus(BufferedReader keyboard, Connection con, int tripNum, String date, String startTime) throws Exception{
+		System.out.print("Provide new bus ID:");
+		int newBus = Integer.parseInt(keyboard.readLine());
+		Statement st = con.createStatement();
+		
+		int rows = st.executeUpdate("UPDATE tripoffering "
+				+ "SET BusID = " + newBus
+				+ " WHERE TripNumber = " + tripNum
+				+ " AND Date = \"" + date + "\" "
+				+ "AND ScheduledStartTime = \"" + startTime + "\" ");
+		if(rows > 0)
+			System.out.println("Successfully updated");
+		else
+			System.out.println("Data could not be found!");
+	}
+	
+	static void displayStop(BufferedReader keyboard, Connection con) throws Exception{
+		System.out.print("Provide trip number: ");
+		int tripNum = Integer.parseInt(keyboard.readLine());
+		
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery("SELECT * "
+				+ "FROM tripstopinfo "
+				+ "WHERE TripNumber = " + tripNum);
+		StringBuilder build = new StringBuilder();
+		while(rs.next()) {
+			build.append(rs.getString("TripNumber"));
+			build.append(" ");
+			build.append(rs.getString("StopNumber"));
+			build.append(" ");
+			build.append(rs.getString("SequenceNumber"));
+			build.append(" ");
+			build.append(rs.getString("DrivingTime"));
+			build.append("\n");
+		}
+		String output = build.toString();
+		if(output.isEmpty()) {
+			System.out.println("There is no data!");
+		}
+		else
+			System.out.println(output);
+	}
 }
