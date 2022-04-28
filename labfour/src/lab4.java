@@ -324,7 +324,7 @@ public class lab4 {
             try {
                 Statement st = con.createStatement();
                 st.executeUpdate(query);
-                System.out.printf("The Driver, %d, has been added.\n", driverName);
+                System.out.printf("The Driver, %s, has been added.\n", driverName);
             } catch(Exception e){
                 System.out.println("Row was not Added");
                 e.printStackTrace();
