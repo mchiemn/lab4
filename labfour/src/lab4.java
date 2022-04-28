@@ -36,7 +36,7 @@ public class lab4 {
 				displayStop(keyboard, con);
 				break;
 			case 4:
-				displaySchedule(keyboard, con);
+				displayWeeklySchedule(keyboard, con);
 				break;
 			}
 			System.out.println("Finished? (Y/N)");
@@ -252,6 +252,41 @@ public class lab4 {
 			build.append(rs.getString("SequenceNumber"));
 			build.append(" ");
 			build.append(rs.getString("DrivingTime"));
+			build.append("\n");
+		}
+		String output = build.toString();
+		if(output.isEmpty()) {
+			System.out.println("There is no data!");
+		}
+		else
+			System.out.println(output);
+	}
+	
+	static void displayWeeklySchedule(BufferedReader keyboard, Connection con) throws Exception {
+		System.out.print("Provide driver's name: ");
+		String driverName = keyboard.readLine();
+		System.out.print("Provide date: ");
+		String date = keyboard.readLine();
+		
+		Statement st = con.createStatement();
+		ResultSet rs = st.executeQuery("SELECT * "
+				+ "FROM tripoffering "
+				+ "WHERE DriverName = \"" + driverName + "\" "
+				+ "AND Date BETWEEN Date(\"" + date + "\") "
+				+ "AND DATE_ADD(\"" + date + "\", INTERVAL 1 week)");
+		StringBuilder build = new StringBuilder();
+		while(rs.next()) {
+			build.append(rs.getString("TripNumber"));
+			build.append(" ");
+			build.append(rs.getString("Date"));
+			build.append(" ");
+			build.append(rs.getString("ScheduledStartTime"));
+			build.append(" ");
+			build.append(rs.getString("ScheduledArrivalTime"));
+			build.append(" ");
+			build.append(rs.getString("DriverName"));
+			build.append(" ");
+			build.append(rs.getString("BusID"));
 			build.append("\n");
 		}
 		String output = build.toString();
