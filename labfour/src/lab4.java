@@ -38,6 +38,21 @@ public class lab4 {
 			case 4:
 				displayWeeklySchedule(keyboard, con);
 				break;
+                        case 5:
+                                addDriver(keyboard, con);
+                                break;
+                        case 6:
+                                addBus(keyboard, con);
+                                break;
+                        case 7:
+                                deleteBus(keyboard, con);
+                                break;
+                        case 8:
+                                insertActualTripStopInfo(keyboard, con);
+                                break;
+                        default:
+                                System.out.println("Exiting Program................");
+                                break;
 			}
 			System.out.println("Finished? (Y/N)");
 			if(keyboard.readLine().equalsIgnoreCase("Y")) {
@@ -296,4 +311,112 @@ public class lab4 {
 		else
 			System.out.println(output);
 	}
+
+        static void addDriver(BufferedReader keyboard, Connection con) throws Exception {
+        
+            System.out.print("Provide Driver's Name: ");
+            String driverName = keyboard.readLine();
+            System.out.print("Provide Driver's Telephone Number: ");
+            String telephoneNum = keyboard.readLine();
+            // Create Query, Table Name must match with Database Connection
+            String query = String.format("Insert into Driver values(\"%s\", \"%s\")", 
+                    driverName, telephoneNum);
+            try {
+                Statement st = con.createStatement();
+                st.executeUpdate(query);
+                System.out.printf("The Driver, %d, has been added.\n", driverName);
+            } catch(Exception e){
+                System.out.println("Row was not Added");
+                e.printStackTrace();
+            }
+        }
+    
+        static void addBus(BufferedReader keyboard, Connection con) throws Exception {
+
+            System.out.print("Provide New BusID: ");
+            String busID = keyboard.readLine();
+            System.out.print("Provide Bus Model: ");
+            String model = keyboard.readLine();
+            System.out.print("Provide Bus Year (YYYY): ");
+            String year = keyboard.readLine();
+
+            //Create Query
+            String query = String.format("Insert into Bus values(\"%s\", \"%s\", \"%s\")", 
+                    busID, model, year);
+            Statement st = con.createStatement();
+            try {
+                st.executeUpdate(query);
+                System.out.println("New Bus Has Been Added");
+            } catch(Exception e){
+                System.out.println("Row was not Added");
+                e.printStackTrace();
+            }
+        }
+
+        static void deleteBus(BufferedReader keyboard, Connection con) throws Exception {
+
+            System.out.print("Delete BusID: ");
+            int busID = Integer.parseInt(keyboard.readLine());
+            
+            //Create Query
+            String query = "Delete FROM Bus WHERE BusID = " + busID;
+            Statement st = con.createStatement();
+            try {
+                st.executeUpdate(query);
+                System.out.println("Bus Has Been Deleted.");
+            } catch(Exception e){
+                System.out.println("Row was not deleted");
+                e.printStackTrace();
+            }
+        }
+
+        static void insertActualTripStopInfo(BufferedReader keyboard, Connection con) throws Exception {
+            System.out.println("Record Actual Data For Trip Stop: ");
+
+            System.out.print("Provide Trip #: ");
+            int tripNum = Integer.parseInt(keyboard.readLine());
+
+            System.out.print("Provide Date (YYYY-MM-DD): ");
+            String Date = keyboard.readLine();
+
+            System.out.print("Provide Trip's Scheduled Start Time: ");
+            String ScheduledStartTime = keyboard.readLine();
+
+            System.out.print("Provide Trip's Stop Number: ");
+            int StopNumber = Integer.parseInt(keyboard.readLine());
+
+            // Message After User has Specified the TripStop by the Primary Key values
+            System.out.printf("Now Entering Data for Trip#: %d, Date: %s, Scheduled Start Time: %s, Stop Number: %d\n\n", 
+                    tripNum, Date, ScheduledStartTime, StopNumber);
+
+            System.out.print("Provide Scheduled Arrival Time: ");
+            String ScheduledArrivalTime = keyboard.readLine();
+
+            System.out.print("Provide Trip's Actual Start Time: ");
+            String ActualStartTime = keyboard.readLine();
+
+            System.out.print("Provide Trip's Actual Arrival Time: ");
+            String ActualArrivalTime = keyboard.readLine();
+
+            System.out.print("Provide The Number of Passengers that Entered The Bus: ");
+            int NumberOfPassengerIn = Integer.parseInt(keyboard.readLine());
+
+            System.out.print("Provide The Number of Passengers that Exited The Bus: ");
+            int NumberOfPassengerOut = Integer.parseInt(keyboard.readLine());
+
+            // Create Query
+            String query = String.format("INSERT INTO actualtripstopinfo values (%d, \"%s\", \"%s\", %d, \"%s\","
+                    + "\"%s\", \"%s\", %d, %d)",
+                    tripNum, Date, ScheduledStartTime, StopNumber, ScheduledArrivalTime, 
+                    ActualStartTime, ActualArrivalTime, NumberOfPassengerIn, NumberOfPassengerOut);
+            
+            Statement st = con.createStatement();
+            try {
+                st.executeUpdate(query);
+                System.out.println("Trip Data has been Recorded!");
+            } catch(Exception e){
+                System.out.println("Row was not Added!");
+                e.printStackTrace();
+            }
+        }
 }
